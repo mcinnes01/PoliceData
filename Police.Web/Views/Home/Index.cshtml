@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "How To Create Dynamic Google Column Chart In an Asp.Net MVC Using C# and Javascript";
+}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {  
+        $.get('/Home/GetData', {},
+        function (data) {
+            var tdata = new google.visualization.DataTable();
+
+            tdata.addColumn('string', 'Category');
+            tdata.addColumn('number', 'Count');
+
+            for (var i = 0; i < data.length; i++) {
+                tdata.addRow([data[i].Category, data[i].Count]);
+            }
+            
+            var options = {
+                title: "Crime count by category"
+            }
+
+            var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+            chart.draw(tdata, options);
+        });
+    }
+</script>
+
+<div id="chart_div" style="width: 900px; height:500px;">
+
+</div>
+
+<script type="text/javascript">
+
+$(function () {
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        async: true,
+        url: '@Url.Action("PieChart")',
+            data: '{}',
+            success: function (chartsdata) {
+
+                // Callback that creates and populates a data table,
+                // instantiates the pie chart, passes in the data and
+                // draws it.
+
+                var data = new google.visualization.DataTable();
+
+                data.addColumn('string', 'Category');
+                data.addColumn('number', 'Count');
+
+                for (var i = 0; i < chartsdata.length; i++) {
+                    data.addRow([chartsdata[i].PlanName, chartsdata[i].PaymentAmount]);
+                }
+
+                // Instantiate and draw our chart, passing in some options
+                var chart = new google.visualization.PieChart(document.getElementById('chartdiv'));
+
+                chart.draw(data,
+                    {
+                        title: "Show Google Chart in ASP.NET",
+                        position: "top",
+                        fontsize: "14px",
+                        chartArea: { width: '50%' },
+                    });
+            },
+            error: function () {
+                alert("Error loading data! Please try again.");
+            }
+        });
+    })
+</script>
+
+<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="chartdiv" style="width: 600px; height: 350px;"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Getting started</h2>
+        <p>
+            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+            enables a clean separation of concerns and gives you full control over markup
+            for enjoyable, agile development.
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Get more libraries</h2>
+        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Web Hosting</h2>
+        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    </div>
+</div>
